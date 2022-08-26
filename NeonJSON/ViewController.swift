@@ -6,21 +6,134 @@
 //
 
 import Cocoa
+import Neon
+import SwiftTreeSitter
+import TreeSitterJSON
+import TreeSitterClient
 
 class ViewController: NSViewController {
 
+    @IBOutlet var textView: NSTextView!
+
+    var highlighter: Highlighter!
+
+    var treeSitterClient: TreeSitterClient!
+    var query: Query!
+
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        textView.font = .monospacedSystemFont(ofSize: 14, weight: .regular)
 
-        // Do any additional setup after loading the view.
+        textViewSetup()
+        loadHighlights()
+
     }
 
-    override var representedObject: Any? {
-        didSet {
-        // Update the view, if already loaded.
+    private func textViewSetup() {
+        print(#function)
+        guard let textContainer = textView.textContainer, let textStorage = textView.textStorage else {
+            preconditionFailure()
+        }
+        textStorage.delegate = self
+
+        let textInterface = TextContainerSystemInterface(textContainer: textContainer, attributeProvider: attributeProvider(_:))
+
+        self.highlighter = Highlighter(textInterface: textInterface, tokenProvider: self.jsonTokenProvider)
+    }
+
+    func loadHighlights() {
+        let language = Language(language: tree_sitter_json())
+
+        let url = Bundle.main
+            .resourceURL?
+            .appendingPathComponent("TreeSitterJSON_TreeSitterJSON.bundle")
+            .appendingPathComponent("Contents/Resources/queries/highlights.scm")
+
+        query = try! language.query(contentsOf: url!)
+
+        // produce a transformer function that can map UTF16 code point indexes to Point (Line, Offset) structs
+        let transformer: Point.LocationTransformer = { codePointIndex in
+            let stringContent = self.textView.textStorage!.string
+            let loc = stringContent.lineNumber(for: codePointIndex)
+
+            return Point(row: loc.0, column: loc.1)
+        }
+
+        treeSitterClient = try! TreeSitterClient(language: language, transformer: transformer)
+
+        treeSitterClient.invalidationHandler = { indexSet in
+            // highlighter.invalidate(.set(indexSet))
         }
     }
 
+    private func attributeProvider(_ token: Token) -> [NSAttributedString.Key: Any]? {
+        switch token.name {
+        case "braces", "square_brackets":
+            return [.foregroundColor: NSColor.systemOrange]
+        case "colon", "comma":
+            return [.foregroundColor: NSColor.systemPink]
+        case "keyword":
+            return [.foregroundColor: NSColor.labelColor]
+        case "string": //string_content
+            return [.foregroundColor: NSColor.systemGreen]
+        case "bool":
+            return [.foregroundColor: NSColor.systemRed]
+        case "number":
+            return [.foregroundColor: NSColor.systemBlue]
+        case "null":
+            return [.foregroundColor: NSColor.systemTeal]
+        default: return [.foregroundColor: NSColor.systemGray, .backgroundColor: NSColor.systemRed]
+        }
+    }
 
+    private func jsonTokenProvider(_ range: NSRange, completionHandler: @escaping (Result<TokenApplication, Error>) -> Void) {
+        print(#function, range.location, range.length)
+        guard let _ = textView.textStorage?.string[range] else {
+            return
+        }
+
+        treeSitterClient.executeHighlightsQuery(query, in: range) { result in
+            switch result {
+            case .success(let tokenList):
+                completionHandler(.success(TokenApplication(tokens: tokenList)))
+            case .failure(let error):
+                completionHandler(.failure(error))
+            }
+        }
+    }
 }
+
+extension ViewController: NSTextStorageDelegate {
+    func textStorage(_ textStorage: NSTextStorage, willProcessEditing editedMask: NSTextStorageEditActions, range editedRange: NSRange, changeInLength delta: Int) {
+        treeSitterClient.willChangeContent(in: editedRange)
+    }
+
+    func textStorage(_ textStorage: NSTextStorage, didProcessEditing editedMask: NSTextStorageEditActions, range editedRange: NSRange, changeInLength delta: Int) {
+        let adjustedRange = NSRange(location: editedRange.location, length: editedRange.length - delta)
+        self.highlighter.didChangeContent(in: adjustedRange, delta: delta)
+        treeSitterClient.didChangeContent(to: textStorage.string, in: editedRange, delta: delta, limit: textStorage.string.count)
+
+        DispatchQueue.main.async {
+            self.highlighter.visibleContentDidChange()
+        }
+    }
+}
+
+
+extension String {
+    func lineNumber(for location: Int) -> (Int, Int) {
+        var lineCount = 0
+        var charCount = 0
+        for (i, c) in enumerated() where i < location {
+            charCount += 1
+            if c.isNewline {
+                lineCount += 1
+                charCount = 0
+            }
+        }
+        return (lineCount, charCount)
+    }
+}
+
 

@@ -11,6 +11,8 @@
 		91C38EAB28B8FE26000F0E2F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C38EAA28B8FE26000F0E2F /* ViewController.swift */; };
 		91C38EAD28B8FE29000F0E2F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91C38EAC28B8FE29000F0E2F /* Assets.xcassets */; };
 		91C38EB028B8FE29000F0E2F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 91C38EAE28B8FE29000F0E2F /* Main.storyboard */; };
+		91C38EB928B8FE4F000F0E2F /* Neon in Frameworks */ = {isa = PBXBuildFile; productRef = 91C38EB828B8FE4F000F0E2F /* Neon */; };
+		91C38EBE28B92749000F0E2F /* TreeSitterJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 91C38EBD28B92749000F0E2F /* TreeSitterJSON */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +22,7 @@
 		91C38EAC28B8FE29000F0E2F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		91C38EAF28B8FE29000F0E2F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		91C38EB128B8FE2A000F0E2F /* NeonJSON.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NeonJSON.entitlements; sourceTree = "<group>"; };
+		91C38EBB28B92705000F0E2F /* tree-sitter-json */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "tree-sitter-json"; path = "../tree-sitter-json"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,6 +30,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91C38EB928B8FE4F000F0E2F /* Neon in Frameworks */,
+				91C38EBE28B92749000F0E2F /* TreeSitterJSON in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -36,8 +41,10 @@
 		91C38E9C28B8FE26000F0E2F = {
 			isa = PBXGroup;
 			children = (
+				91C38EBA28B92705000F0E2F /* Packages */,
 				91C38EA728B8FE26000F0E2F /* NeonJSON */,
 				91C38EA628B8FE26000F0E2F /* Products */,
+				91C38EBC28B92749000F0E2F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -61,6 +68,21 @@
 			path = NeonJSON;
 			sourceTree = "<group>";
 		};
+		91C38EBA28B92705000F0E2F /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				91C38EBB28B92705000F0E2F /* tree-sitter-json */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		91C38EBC28B92749000F0E2F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -77,6 +99,10 @@
 			dependencies = (
 			);
 			name = NeonJSON;
+			packageProductDependencies = (
+				91C38EB828B8FE4F000F0E2F /* Neon */,
+				91C38EBD28B92749000F0E2F /* TreeSitterJSON */,
+			);
 			productName = NeonJSON;
 			productReference = 91C38EA528B8FE26000F0E2F /* NeonJSON.app */;
 			productType = "com.apple.product-type.application";
@@ -105,6 +131,9 @@
 				Base,
 			);
 			mainGroup = 91C38E9C28B8FE26000F0E2F;
+			packageReferences = (
+				91C38EB728B8FE4F000F0E2F /* XCRemoteSwiftPackageReference "Neon" */,
+			);
 			productRefGroup = 91C38EA628B8FE26000F0E2F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -339,6 +368,29 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		91C38EB728B8FE4F000F0E2F /* XCRemoteSwiftPackageReference "Neon" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ChimeHQ/Neon";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		91C38EB828B8FE4F000F0E2F /* Neon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 91C38EB728B8FE4F000F0E2F /* XCRemoteSwiftPackageReference "Neon" */;
+			productName = Neon;
+		};
+		91C38EBD28B92749000F0E2F /* TreeSitterJSON */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TreeSitterJSON;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 91C38E9D28B8FE26000F0E2F /* Project object */;
 }
