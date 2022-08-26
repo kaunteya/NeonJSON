@@ -24,25 +24,23 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         textView.font = .monospacedSystemFont(ofSize: 14, weight: .regular)
+        textView.textStorage?.delegate = self
 
-        textViewSetup()
-        loadHighlights()
-
+        initialiseHighlighter()
+        initialiseTreeSitterClient()
     }
 
-    private func textViewSetup() {
-        print(#function)
-        guard let textContainer = textView.textContainer, let textStorage = textView.textStorage else {
+    private func initialiseHighlighter() {
+        guard let textContainer = textView.textContainer else {
             preconditionFailure()
         }
-        textStorage.delegate = self
 
-        let textInterface = TextContainerSystemInterface(textContainer: textContainer, attributeProvider: attributeProvider(_:))
+        let textInterface = TextContainerSystemInterface(textContainer: textContainer, attributeProvider: attributeProvider)
 
-        self.highlighter = Highlighter(textInterface: textInterface, tokenProvider: self.jsonTokenProvider)
+        self.highlighter = Highlighter(textInterface: textInterface, tokenProvider: self.tokenProvider)
     }
 
-    func loadHighlights() {
+    private func initialiseTreeSitterClient() {
         let language = Language(language: tree_sitter_json())
 
         let url = Bundle.main
@@ -52,7 +50,6 @@ class ViewController: NSViewController {
 
         query = try! language.query(contentsOf: url!)
 
-        // produce a transformer function that can map UTF16 code point indexes to Point (Line, Offset) structs
         let transformer: Point.LocationTransformer = { codePointIndex in
             let stringContent = self.textView.textStorage!.string
             let loc = stringContent.lineNumber(for: codePointIndex)
@@ -63,7 +60,6 @@ class ViewController: NSViewController {
         treeSitterClient = try! TreeSitterClient(language: language, transformer: transformer)
 
         treeSitterClient.invalidationHandler = { indexSet in
-            // highlighter.invalidate(.set(indexSet))
         }
     }
 
@@ -87,7 +83,7 @@ class ViewController: NSViewController {
         }
     }
 
-    private func jsonTokenProvider(_ range: NSRange, completionHandler: @escaping (Result<TokenApplication, Error>) -> Void) {
+    private func tokenProvider(_ range: NSRange, completionHandler: @escaping (Result<TokenApplication, Error>) -> Void) {
         print(#function, range.location, range.length)
         guard let _ = textView.textStorage?.string[range] else {
             return
@@ -135,5 +131,4 @@ extension String {
         return (lineCount, charCount)
     }
 }
-
 
