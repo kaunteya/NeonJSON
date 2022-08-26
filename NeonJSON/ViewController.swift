@@ -20,6 +20,7 @@ class ViewController: NSViewController {
     var treeSitterClient: TreeSitterClient!
     var query: Query!
 
+    var scrollObserver: NSObjectProtocol!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,6 +29,7 @@ class ViewController: NSViewController {
 
         initialiseHighlighter()
         initialiseTreeSitterClient()
+        addScrollObserver()
     }
 
     private func initialiseHighlighter() {
@@ -63,15 +65,24 @@ class ViewController: NSViewController {
         }
     }
 
+    private func addScrollObserver() {
+        textView.enclosingScrollView?.contentView.postsFrameChangedNotifications = true
+
+        scrollObserver = NotificationCenter.default
+            .addObserver(forName: NSView.boundsDidChangeNotification, object: textView.enclosingScrollView?.contentView, queue: nil) { _ in
+                self.highlighter.visibleContentDidChange()
+            }
+    }
+
     private func attributeProvider(_ token: Token) -> [NSAttributedString.Key: Any]? {
         switch token.name {
         case "braces", "square_brackets":
             return [.foregroundColor: NSColor.systemOrange]
         case "colon", "comma":
-            return [.foregroundColor: NSColor.systemPink]
+            return [.foregroundColor: NSColor.secondaryLabelColor]
         case "keyword":
-            return [.foregroundColor: NSColor.labelColor]
-        case "string": //string_content
+            return [.foregroundColor: NSColor.systemYellow]
+        case "string":
             return [.foregroundColor: NSColor.systemGreen]
         case "bool":
             return [.foregroundColor: NSColor.systemRed]
