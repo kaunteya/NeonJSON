@@ -24,7 +24,7 @@ class ViewController: NSViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        textView.font = .monospacedSystemFont(ofSize: 14, weight: .regular)
+        textView.font = .monospacedSystemFont(ofSize: 16, weight: .regular)
         textView.textStorage?.delegate = self
 
         initialiseHighlighter()
@@ -62,6 +62,7 @@ class ViewController: NSViewController {
         treeSitterClient = try! TreeSitterClient(language: language, transformer: transformer)
 
         treeSitterClient.invalidationHandler = { indexSet in
+            print("Invalidation \(indexSet)")
         }
     }
 
@@ -77,7 +78,7 @@ class ViewController: NSViewController {
     private func attributeProvider(_ token: Token) -> [NSAttributedString.Key: Any]? {
         switch token.name {
         case "braces", "square_brackets":
-            return [.foregroundColor: NSColor.systemOrange]
+            return [.foregroundColor: NSColor.systemPurple]
         case "colon", "comma":
             return [.foregroundColor: NSColor.secondaryLabelColor]
         case "keyword":
@@ -119,7 +120,7 @@ extension ViewController: NSTextStorageDelegate {
     func textStorage(_ textStorage: NSTextStorage, didProcessEditing editedMask: NSTextStorageEditActions, range editedRange: NSRange, changeInLength delta: Int) {
         let adjustedRange = NSRange(location: editedRange.location, length: editedRange.length - delta)
         self.highlighter.didChangeContent(in: adjustedRange, delta: delta)
-        treeSitterClient.didChangeContent(to: textStorage.string, in: editedRange, delta: delta, limit: textStorage.string.count)
+        treeSitterClient.didChangeContent(to: textStorage.string, in: adjustedRange, delta: delta, limit: textStorage.string.count)
 
         DispatchQueue.main.async {
             self.highlighter.visibleContentDidChange()
