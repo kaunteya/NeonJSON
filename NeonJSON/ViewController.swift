@@ -89,7 +89,6 @@ class ViewController: NSViewController {
         case "value.null":
             return [.foregroundColor: NSColor.systemTeal]
         case "error":
-            print("ERROR")
             return [.foregroundColor: NSColor.systemGray, .backgroundColor: NSColor.systemRed]
         default:
             return [.foregroundColor: NSColor.systemGray, .backgroundColor: NSColor.systemGreen]
@@ -97,7 +96,6 @@ class ViewController: NSViewController {
     }
 
     private func tokenProvider(_ range: NSRange, completionHandler: @escaping (Result<TokenApplication, Error>) -> Void) {
-        print(#function, range.location, range.length)
         guard let _ = textView.textStorage?.string[range] else {
             return
         }
@@ -124,20 +122,3 @@ extension ViewController: NSTextStorageDelegate {
         treeSitterClient.didChangeContent(to: textStorage.string, in: adjustedRange, delta: delta, limit: textStorage.string.count)
     }
 }
-
-
-extension String {
-    func lineNumber(for location: Int) -> (Int, Int) {
-        var lineCount = 0
-        var charCount = 0
-        for (i, c) in enumerated() where i < location {
-            charCount += 1
-            if c.isNewline {
-                lineCount += 1
-                charCount = 0
-            }
-        }
-        return (lineCount, charCount)
-    }
-}
-
