@@ -88,8 +88,11 @@ class ViewController: NSViewController {
             return [.foregroundColor: NSColor.systemBlue]
         case "value.null":
             return [.foregroundColor: NSColor.systemTeal]
-        default:
+        case "error":
+            print("ERROR")
             return [.foregroundColor: NSColor.systemGray, .backgroundColor: NSColor.systemRed]
+        default:
+            return [.foregroundColor: NSColor.systemGray, .backgroundColor: NSColor.systemGreen]
         }
     }
 
