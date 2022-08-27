@@ -62,7 +62,7 @@ class ViewController: NSViewController {
         treeSitterClient = try! TreeSitterClient(language: language, transformer: transformer)
 
         treeSitterClient.invalidationHandler = { indexSet in
-            print("Invalidation \(indexSet)")
+            self.highlighter.invalidate(.set(indexSet))
         }
     }
 
@@ -121,10 +121,6 @@ extension ViewController: NSTextStorageDelegate {
         let adjustedRange = NSRange(location: editedRange.location, length: editedRange.length - delta)
         self.highlighter.didChangeContent(in: adjustedRange, delta: delta)
         treeSitterClient.didChangeContent(to: textStorage.string, in: adjustedRange, delta: delta, limit: textStorage.string.count)
-
-        DispatchQueue.main.async {
-            self.highlighter.visibleContentDidChange()
-        }
     }
 }
 
