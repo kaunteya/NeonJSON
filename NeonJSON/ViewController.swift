@@ -52,14 +52,7 @@ class ViewController: NSViewController {
 
         query = try! language.query(contentsOf: url!)
 
-        let transformer: Point.LocationTransformer = { codePointIndex in
-            let stringContent = self.textView.textStorage!.string
-            let loc = stringContent.lineNumber(for: codePointIndex)
-
-            return Point(row: loc.0, column: loc.1)
-        }
-
-        treeSitterClient = try! TreeSitterClient(language: language, transformer: transformer)
+        treeSitterClient = try! TreeSitterClient(language: language)
 
         treeSitterClient.invalidationHandler = { indexSet in
             self.highlighter.invalidate(.set(indexSet))
