@@ -52,10 +52,14 @@ class ViewController: NSViewController {
 
         query = try! language.query(contentsOf: url!)
 
-        treeSitterClient = try! TreeSitterClient(language: language)
+        treeSitterClient = try! TreeSitterClient(language: language, transformer: { index in
+            return Point.zero
+        })
 
         treeSitterClient.invalidationHandler = { indexSet in
-            self.highlighter.invalidate(.set(indexSet))
+            DispatchQueue.main.async {
+                self.highlighter.invalidate(.set(indexSet))
+            }
         }
     }
 
