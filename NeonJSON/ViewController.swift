@@ -83,13 +83,13 @@ class ViewController: NSViewController {
             return [.foregroundColor: NSColor.secondaryLabelColor]
         case "keyword":
             return [.foregroundColor: NSColor.systemYellow]
-        case "string":
+        case "value.string":
             return [.foregroundColor: NSColor.systemGreen]
-        case "bool":
+        case "value.bool":
             return [.foregroundColor: NSColor.systemRed]
-        case "number":
+        case "value.number":
             return [.foregroundColor: NSColor.systemBlue]
-        case "null":
+        case "value.null":
             return [.foregroundColor: NSColor.systemTeal]
         default:
             return [.foregroundColor: NSColor.systemGray, .backgroundColor: NSColor.systemRed]
