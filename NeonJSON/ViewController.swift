@@ -77,9 +77,9 @@ class ViewController: NSViewController {
 
     private func attributeProvider(_ token: Token) -> [NSAttributedString.Key: Any]? {
         switch token.name {
-        case "braces", "square_brackets":
+        case "punctuation.bracket":
             return [.foregroundColor: NSColor.systemPurple]
-        case "colon", "comma":
+        case "punctuation.delimiter":
             return [.foregroundColor: NSColor.secondaryLabelColor]
         case "keyword":
             return [.foregroundColor: NSColor.systemYellow]
@@ -91,7 +91,8 @@ class ViewController: NSViewController {
             return [.foregroundColor: NSColor.systemBlue]
         case "null":
             return [.foregroundColor: NSColor.systemTeal]
-        default: return [.foregroundColor: NSColor.systemGray, .backgroundColor: NSColor.systemRed]
+        default:
+            return [.foregroundColor: NSColor.systemGray, .backgroundColor: NSColor.systemRed]
         }
     }
 
