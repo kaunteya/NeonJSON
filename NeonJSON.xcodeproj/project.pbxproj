@@ -23,6 +23,7 @@
 		91C38EAF28B8FE29000F0E2F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		91C38EB128B8FE2A000F0E2F /* NeonJSON.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NeonJSON.entitlements; sourceTree = "<group>"; };
 		91C38EBB28B92705000F0E2F /* tree-sitter-json */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "tree-sitter-json"; path = "../tree-sitter-json"; sourceTree = "<group>"; };
+		91C38EBF28BA08EA000F0E2F /* Neon */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Neon; path = ../Neon; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +73,7 @@
 			isa = PBXGroup;
 			children = (
 				91C38EBB28B92705000F0E2F /* tree-sitter-json */,
+				91C38EBF28BA08EA000F0E2F /* Neon */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
